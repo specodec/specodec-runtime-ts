@@ -17,12 +17,12 @@ function ensure(dir) {
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
-console.log("\n=== Step 0: Install dependencies ===");
+console.log("\n=== Step 1: Install dependencies ===");
 run(`cd ${__dir} && npm install`);
 
 
 
-console.log("\n=== Step 3: Generate emit code ===");
+console.log("\n=== Step 2: Generate emit code ===");
 if (existsSync(GENERATED)) rmSync(GENERATED, { recursive: true });
 ensure(GENERATED);
 
@@ -37,7 +37,7 @@ if (tsFiles.length > 0) {
   process.exit(1);
 }
 
-console.log("\n=== Step 4: Generate test runner ===");
+console.log("\n=== Step 3: Generate test runner ===");
 run(`cd ${__dir} && VEC_DIR=${VEC_DIR} node generate_emit_runner.mjs`);
 
 console.log("\n=== Step 5: Run tests ===");
@@ -45,7 +45,6 @@ if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true });
 ensure(OUT_DIR);
 
 // Build runtime first
-run(`npm install @specodec/specodec-runtime-typescript@1.0.0 --ignore-scripts --registry http://10.199.64.20:30000/api/packages/specodec/npm/`);
 
 // Run emit test
 try { run(`cd ${__dir} && VEC_DIR=${VEC_DIR} OUT_DIR=${OUT_DIR} npx tsx emit/main.ts`); } catch (e) { console.log("TypeScript tests completed (some failures expected)"); }

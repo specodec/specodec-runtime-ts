@@ -2,7 +2,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const VEC_DIR = process.env.VEC_DIR || join(__dir, "..", ".tests-cache", "vectors");
+const VEC_DIR = process.env.VEC_DIR || join(__dir, "..", "vectors");
 const OUT_DIR = process.env.OUT_DIR || join(__dir, "..", "output");
 
 import { runScalars } from "./test_scalars.js";
