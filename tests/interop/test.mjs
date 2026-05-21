@@ -4,7 +4,7 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const CACHE = join(__dir, ".tests-cache");
+const VEC_DIR = join(__dir, "vectors");
 const GENERATED = join(__dir, "src", "generated");
 const OUT_DIR = join(__dir, "output");
 
@@ -20,19 +20,13 @@ function ensure(dir) {
 console.log("\n=== Step 0: Install dependencies ===");
 run(`cd ${__dir} && npm install`);
 
-console.log('\n=== Step 2: Using cached .tests-cache ===');
 
-console.log("\n=== Step 2: Generate vectors ===");
-run(`cd ${CACHE} && npm install`);
-run(`cd ${CACHE} && node gen_types.mjs`);
-
-const VEC_DIR = join(CACHE, "vectors");
 
 console.log("\n=== Step 3: Generate emit code ===");
 if (existsSync(GENERATED)) rmSync(GENERATED, { recursive: true });
 ensure(GENERATED);
 
-run(`cd ${__dir} && node_modules/.bin/tsp compile ${CACHE}/alltypes.tsp --emit=@specodec/typespec-emitter-typescript \
+run(`cd ${__dir} && node_modules/.bin/tsp compile ${__dir}/alltypes.tsp --emit=@specodec/typespec-emitter-typescript \
   --option @specodec/typespec-emitter-typescript.emitter-output-dir=${GENERATED}`);
 
 const tsFiles = readdirSync(GENERATED).filter(f => f.endsWith(".ts"));
@@ -51,7 +45,7 @@ if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true });
 ensure(OUT_DIR);
 
 // Build runtime first
-run(`npm install @specodec/specodec-runtime-typescript@1.0.0 --ignore-scripts --registry http://10.199.64.20:3000/api/packages/specodec/npm/`);
+run(`npm install @specodec/specodec-runtime-typescript@1.0.0 --ignore-scripts --registry http://10.199.64.20:30000/api/packages/specodec/npm/`);
 
 // Run emit test
 try { run(`cd ${__dir} && VEC_DIR=${VEC_DIR} OUT_DIR=${OUT_DIR} npx tsx emit/main.ts`); } catch (e) { console.log("TypeScript tests completed (some failures expected)"); }
